@@ -22,7 +22,26 @@ router.post("/createExchange", async (req, res) => {
   }
 });
 
+router.get("/exchangeRange", async (req, res) => {
+  try {
+    const { query } = req;
+    const result = await getExchangeRange(query.fromCurrency, query.toCurrency, query.fromNetwork, query.toNetwork);
+    return res.status(200).json({ result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 app.use(express.json());
+app.use(require("morgan")("combined"));
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+
+  next();
+});
 app.use("/swap", router);
 
 app.listen(port, () => console.log(`Listening on ${port}`));
