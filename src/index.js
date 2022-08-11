@@ -32,6 +32,16 @@ router.get("/exchangeRange", async (req, res) => {
   }
 });
 
+router.get("/minimalExchangeAmount", async (req, res) => {
+  try {
+    const { query } = req;
+    const result = await getMinimalExchangeAmount(query.fromCurrency, query.toCurrency, query.fromNetwork, query.toNetwork);
+    return res.status(200).json({ result });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 app.use(express.json());
 app.use(require("morgan")("combined"));
 
