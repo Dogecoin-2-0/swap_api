@@ -46,4 +46,16 @@ function getMinimalExchangeAmount(fromCurrency, toCurrency, fromNetwork, toNetwo
   });
 }
 
-module.exports = { createTransaction, getExchangeRange, getMinimalExchangeAmount };
+function getEstimatedExchangeAmount(fromCurrency, toCurrency, fromAmount, fromNetwork, toNetwork, flow = "standard") {
+  return new Promise((resolve, reject) => {
+    changeNowClient
+      .get(
+        `/exchange/estimated-amount?fromCurrency=${fromCurrency}&toCurrency=${toCurrency}&fromNetwork=${fromNetwork}&toNetwork=${toNetwork}&fromAmount=${fromAmount}&flow=${flow}`
+      )
+      .then((res) => res.data)
+      .then(resolve)
+      .catch(reject);
+  });
+}
+
+module.exports = { createTransaction, getExchangeRange, getMinimalExchangeAmount, getEstimatedExchangeAmount };

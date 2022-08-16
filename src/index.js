@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createTransaction, getExchangeRange, getMinimalExchangeAmount } = require("./exchange_client");
+const { createTransaction, getExchangeRange, getMinimalExchangeAmount, getEstimatedExchangeAmount } = require("./exchange_client");
 
 const port = process.env.PORT || 10500;
 const app = express();
@@ -18,7 +18,7 @@ router.post("/createExchange", async (req, res) => {
     const result = await createTransaction(body.fromCurrency, body.toCurrency, body.fromNetwork, body.toNetwork, body.fromAAmount, body.address);
     return res.status(200).json({ result });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.response?.data?.message || error.message });
   }
 });
 
@@ -28,7 +28,7 @@ router.get("/exchangeRange", async (req, res) => {
     const result = await getExchangeRange(query.fromCurrency, query.toCurrency, query.fromNetwork, query.toNetwork);
     return res.status(200).json({ result });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.response?.data?.message || error.message });
   }
 });
 
@@ -38,7 +38,17 @@ router.get("/minimalExchangeAmount", async (req, res) => {
     const result = await getMinimalExchangeAmount(query.fromCurrency, query.toCurrency, query.fromNetwork, query.toNetwork);
     return res.status(200).json({ result });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.response?.data?.message || error.message });
+  }
+});
+
+router.get("/estimatedAmount", async (req, res) => {
+  try {
+    const { query } = req;
+    const result = await getEstimatedExchangeAmount(query.fromCurrency, query.toCurrency, query.fromAmount, query.fromNetwork, query.toNetwork);
+    return res.status(200).json({ result });
+  } catch (error) {
+    return res.status(500).json({ error: error.response?.data?.message || error.message });
   }
 });
 
